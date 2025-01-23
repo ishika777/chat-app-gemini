@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+html,body{
+    height: 100%;
+    width: 100%;
+}
+.message-container{
+    scroll-behavior: smooth;
+}
+.message-container::-webkit-scrollbar{
+    display: none;
+}
+.add-collab{
+    scroll-behavior: smooth;
+}
+.add-collab::-webkit-scrollbar{
+    display: none;
+}
+@layer base {
+  :root {
+        --radius: 0.5rem;
+    }
+}
