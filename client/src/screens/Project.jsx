@@ -23,7 +23,8 @@ import SidePanel from '@/components/SidePanel'
 import MessageContainer from '@/components/MessageContainer'
 import MessageHeader from '@/components/MessageHeader'
 import CodeFile from '@/components/CodeFile'
-import { X } from 'lucide-react'
+import { Play, Triangle, X } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 
 const Project = () => {
@@ -181,20 +182,20 @@ const Project = () => {
                     <ResizableHandle withHandle />
                     <ResizablePanel defaultSize={80} minSize={75} >
                         <div className="code-editor flex flex-col flex-grow h-full shrink">
-
                             <div className="top flex justify-between w-full">
-                                <Tabs defaultValue={null} className="w-[400px]">
-                                    <TabsList className="flex items-center justify-start gap-1">
+                                <Tabs defaultValue={null} className="w-full">
+                                    <TabsList className="flex items-center justify-start gap-1 rounded-none bg-gray-200">
                                         {openFiles.map((file, index) => (
                                             <TabsTrigger
                                                 key={index}
-                                                className={`open-file cursor-pointer p-2 px-4 flex items-center w-fit text-black ${currentFile === file ? 'bg-slate-400' : 'bg-white'}`}
+                                                className={`open-file cursor-pointer flex items-center w-fit text-black ${currentFile === file ? 'bg-gray-400' : ''}`}
                                                 onClick={() => {
                                                     setCurrentFile(file)
                                                     console.log("file set as", file)
                                                 }}
                                             >
-                                                {file} <X size={20} className='ml-3 text-red-500 hover:bg-gray-100 p-[1px]' onClick={(e) => {
+                                                {file} 
+                                                <X size={20} className='ml-1 hover:bg-gray-100 p-[1px]' onClick={(e) => {
                                                     e.stopPropagation();
                                                     const newFiles = openFiles.filter(f => f !== file)
                                                     setOpenFiles(newFiles)
@@ -207,9 +208,8 @@ const Project = () => {
                                     </TabsList>
                                 </Tabs>
     
-
-                                <div className="actions flex gap-2">
-                                    <button
+                                <div className="actions">
+                                    <Button
                                         onClick={async () => {
                                             await webContainer.mount(fileTree)
                                             const installProcess = await webContainer.spawn("npm", ["install"])
@@ -234,11 +234,12 @@ const Project = () => {
 
                                             saveFileTree(fileTree)
                                         }}
-                                        className='p-2 px-4 bg-red-600 text-white'
+                                        className='p-2 px-3 rounded-none bg-red-600 hover:bg-red-700 text-white'
                                     >
-                                        run
-                                    </button>
+                                        <Play />Run
+                                    </Button>
                                 </div>
+
                             </div>
                             <div className="bottom flex flex-grow max-w-full shrink overflow-auto">
                                 {
@@ -281,18 +282,6 @@ const Project = () => {
                 }
 
             </section>
-            {/* <div className="files flex">
-                                    {openFiles.map((file, index) => (
-                                        <button key={index}
-                                            className={`open-file cursor-pointer p-2 px-4 flex items-center w-fit gap-2 bg-gray-300 ${currentFile === file ? 'bg-slate-400' : ''}`}
-                                            onClick={() => setCurrentFile(file)}
-                                        >
-                                            <p className='font-semibold text-lg'>{file}</p>
-                                        </button>
-                                    ))}
-                                </div> */}
-
-
         </main>
     )
 }
