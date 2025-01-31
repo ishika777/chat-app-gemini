@@ -8,6 +8,12 @@ import { getWebContainer } from '../config/webContainer'
 import { useDispatch, useSelector } from "react-redux";
 import { setSingleProject } from '../store/project-slice'
 
+import {
+    ResizableHandle,
+    ResizablePanel,
+    ResizablePanelGroup,
+} from "@/components/ui/resizable"
+
 
 import AddCoolaborator from '@/components/AddCoolaborator'
 import MessageSend from '@/components/MessageSend'
@@ -23,35 +29,37 @@ const Project = () => {
     const projectId = params.projectId;
 
     const dispatch = useDispatch();
-    const {project} = useSelector((state) => state.project)
-    const {user, allUsers} = useSelector((state) => state.user)
+    const { project } = useSelector((state) => state.project)
+    const { user, allUsers } = useSelector((state) => state.user)
 
     const messageBox = React.createRef()
 
-    const [ isSidePanelOpen, setIsSidePanelOpen ] = useState(false)
-    const [ isModalOpen, setIsModalOpen ] = useState(false)
-    const [ selectedUserId, setSelectedUserId ] = useState(new Set()) 
+    const [isSidePanelOpen, setIsSidePanelOpen] = useState(false)
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [selectedUserId, setSelectedUserId] = useState(new Set())
 
-    const [ messages, setMessages ] = useState([])
-    const [ fileTree, setFileTree ] = useState({})
+    const [messages, setMessages] = useState([])
+    const [fileTree, setFileTree] = useState({})
 
-    const [ currentFile, setCurrentFile ] = useState(null)
-    const [ openFiles, setOpenFiles ] = useState([])
+    const [currentFile, setCurrentFile] = useState(null)
+    const [openFiles, setOpenFiles] = useState([])
 
-    const [ webContainer, setWebContainer ] = useState(null)
-    const [ iframeUrl, setIframeUrl ] = useState(null)
+    const [webContainer, setWebContainer] = useState(null)
+    const [iframeUrl, setIframeUrl] = useState(null)
 
-    const [ runProcess, setRunProcess ] = useState(null)
+    const [runProcess, setRunProcess] = useState(null)
+
+    const [panelSize, setPanelSize] = useState(25);
 
     useEffect(() => {
-        const getProject = async() => {
+        const getProject = async () => {
             try {
                 const response = await axios.get(`/projects/get-project/${projectId}`, {
                     headers: {
                         "Content-Type": "application/json"
                     }
                 })
-                if(response.data.success){
+                if (response.data.success) {
                     dispatch(setSingleProject(response.data.project))
                     setFileTree(response.data.project.fileTree || {})
                 }
@@ -62,7 +70,7 @@ const Project = () => {
         getProject()
     }, [projectId])
 
-    
+
     useEffect(() => {
 
         initSocket(projectId)
@@ -81,9 +89,9 @@ const Project = () => {
                 if (message.fileTree) {
                     setFileTree(message.fileTree || {})
                 }
-                setMessages(prevMessages => [ ...prevMessages, data ])
+                setMessages(prevMessages => [...prevMessages, data])
             } else {
-                setMessages(prevMessages => [ ...prevMessages, data ]) 
+                setMessages(prevMessages => [...prevMessages, data])
             }
         })
     }, [])
@@ -104,7 +112,7 @@ const Project = () => {
         const updatedContent = e.target.innerText;
         const ft = {
             ...fileTree,
-            [ currentFile ]: {
+            [currentFile]: {
                 file: {
                     contents: updatedContent
                 }
@@ -115,7 +123,7 @@ const Project = () => {
     }
 
     return (
-        <main className='h-screen w-screen flex'>   
+        <main className='h-screen w-screen flex'>
 
             <section className="left relative flex flex-col max-h-screen min-w-96 bg-slate-300">
 
@@ -124,7 +132,7 @@ const Project = () => {
                     isSidePanelOpen={isSidePanelOpen}
                     setIsSidePanelOpen={setIsSidePanelOpen}
                 />
-                <MessageContainer 
+                <MessageContainer
                     messageBox={messageBox}
                     messages={messages}
                     user={user}
@@ -137,109 +145,116 @@ const Project = () => {
                     isSidePanelOpen={isSidePanelOpen}
                     setIsSidePanelOpen={setIsSidePanelOpen}
                 />
-                {isModalOpen && (<AddCoolaborator 
-                    allUsers={allUsers} 
-                    selectedUserId={selectedUserId} 
+                {isModalOpen && (<AddCoolaborator
+                    allUsers={allUsers}
+                    selectedUserId={selectedUserId}
                     setSelectedUserId={setSelectedUserId}
                     isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
                 )}
 
             </section>
 
-            <section className="right  bg-red-50 flex-grow h-full flex">
+            <section className="right bg-red-50 flex-grow h-full flex">
 
-                <div className="explorer h-full max-w-64 min-w-52 bg-slate-200">
-                    <div className="file-tree w-full">
-                        {Object.keys(fileTree).map((file, index) => (
-                            <button key={index}
-                                className="tree-element cursor-pointer p-2 px-4 flex items-center gap-2 bg-slate-300 w-full"
-                                onClick={() => {
-                                    setCurrentFile(file)
-                                    setOpenFiles([ ...new Set([ ...openFiles, file ]) ])
-                                }}
-                            >
-                                <p className='font-semibold text-lg'>{file}</p>
-                            </button>
-                        ))}
-                    </div>
-                </div>
-
-
-                <div className="code-editor flex flex-col flex-grow h-full shrink">
-                    <div className="top flex justify-between w-full">
-                        <div className="files flex">
-                            {openFiles.map((file, index) => (
-                                <button key={index}
-                                    className={`open-file cursor-pointer p-2 px-4 flex items-center w-fit gap-2 bg-slate-300 ${currentFile === file ? 'bg-slate-400' : ''}`}
-                                    onClick={() => setCurrentFile(file)}
-                                >
-                                    <p className='font-semibold text-lg'>{file}</p>
-                                </button>
-                            ))}
+                <ResizablePanelGroup
+                    direction="horizontal"
+                    className="h-full w-full"
+                >
+                    <ResizablePanel defaultSize={20} maxSize={25} >
+                        <div className="explorer h-full bg-slate-200">
+                            <div className="file-tree w-full">
+                                {Object.keys(fileTree).map((file, index) => (
+                                    <button key={index}
+                                        className="tree-element cursor-pointer p-2 px-4 flex items-center gap-2 bg-slate-300 w-full"
+                                        onClick={() => {
+                                            setCurrentFile(file)
+                                            setOpenFiles([...new Set([...openFiles, file])])
+                                        }}
+                                    >
+                                        <p className='font-semibold text-lg'>{file}</p>
+                                    </button>
+                                ))}
+                            </div>
                         </div>
+                    </ResizablePanel>
+                    <ResizableHandle withHandle  />
+                    <ResizablePanel defaultSize={80} minSize={75} >
+                        <div className="code-editor flex flex-col flex-grow h-full shrink">
 
-                        <div className="actions flex gap-2">
-                            <button
-                                onClick={async () => {
-                                    await webContainer.mount(fileTree)
-                                    const installProcess = await webContainer.spawn("npm", [ "install" ])
-                                    installProcess.output.pipeTo(new WritableStream({
-                                        write(chunk) {
-                                            console.log(chunk)
-                                        }
-                                    }))
-                                    if (runProcess) {
-                                        runProcess.kill()
-                                    }
-                                    let tempRunProcess = await webContainer.spawn("npm", [ "start" ]);
-                                    tempRunProcess.output.pipeTo(new WritableStream({
-                                        write(chunk) {
-                                            console.log(chunk)
-                                        }
-                                    }))
-                                    setRunProcess(tempRunProcess)
-                                    webContainer.on('server-ready', (port, url) => {
-                                        setIframeUrl(url)
-                                    })
-
-                                    saveFileTree(fileTree)
-                                }}
-                                className='p-2 px-4 bg-red-600 text-white'
-                            >
-                                run
-                            </button>
-                        </div>
-                    </div>
-
-                    <div className="bottom flex flex-grow max-w-full shrink overflow-auto">
-                        <CodeFile />
-                        {/* 
-                        
-                        */}
-                        {
-                            fileTree[ currentFile ] && (
-                                <div className="code-editor-area h-full overflow-auto flex-grow bg-slate-50">
-                                    <pre
-                                        className="hljs h-full">
-                                        <code
-                                            className="hljs h-full outline-none"
-                                            contentEditable
-                                            suppressContentEditableWarning
-                                            onBlur={handleBlur}
-                                            dangerouslySetInnerHTML={{ __html: hljs.highlight('javascript', fileTree[ currentFile ].file.contents).value }}
-                                            style={{
-                                                whiteSpace: 'pre-wrap',
-                                                paddingBottom: '25rem',
-                                                counterSet: 'line-numbering',
-                                            }}
-                                        />
-                                    </pre>
+                            <div className="top flex justify-between w-full">
+                                <div className="files flex">
+                                    {openFiles.map((file, index) => (
+                                        <button key={index}
+                                            className={`open-file cursor-pointer p-2 px-4 flex items-center w-fit gap-2 bg-gray-300 ${currentFile === file ? 'bg-slate-400' : ''}`}
+                                            onClick={() => setCurrentFile(file)}
+                                        >
+                                            <p className='font-semibold text-lg'>{file}</p>
+                                        </button>
+                                    ))}
                                 </div>
-                            )
-                        }
-                    </div>
 
-                </div>
+                                <div className="actions flex gap-2">
+                                    <button
+                                        onClick={async () => {
+                                            await webContainer.mount(fileTree)
+                                            const installProcess = await webContainer.spawn("npm", ["install"])
+                                            installProcess.output.pipeTo(new WritableStream({
+                                                write(chunk) {
+                                                    console.log(chunk)
+                                                }
+                                            }))
+                                            if (runProcess) {
+                                                runProcess.kill()
+                                            }
+                                            let tempRunProcess = await webContainer.spawn("npm", ["start"]);
+                                            tempRunProcess.output.pipeTo(new WritableStream({
+                                                write(chunk) {
+                                                    console.log(chunk)
+                                                }
+                                            }))
+                                            setRunProcess(tempRunProcess)
+                                            webContainer.on('server-ready', (port, url) => {
+                                                setIframeUrl(url)
+                                            })
+
+                                            saveFileTree(fileTree)
+                                        }}
+                                        className='p-2 px-4 bg-red-600 text-white'
+                                    >
+                                        run
+                                    </button>
+                                </div>
+                            </div>
+
+
+                            <div className="bottom flex flex-grow max-w-full shrink overflow-auto">
+                                {
+                                    fileTree[currentFile] && (
+                                        <div className="code-editor-area h-full overflow-auto flex-grow bg-slate-50">
+                                            <pre
+                                                className="hljs h-full">
+                                                <code
+                                                    className="hljs h-full outline-none"
+                                                    contentEditable
+                                                    suppressContentEditableWarning
+                                                    onBlur={handleBlur}
+                                                    dangerouslySetInnerHTML={{ __html: hljs.highlight('javascript', fileTree[currentFile].file.contents).value }}
+                                                    style={{
+                                                        whiteSpace: 'pre-wrap',
+                                                        paddingBottom: '25rem',
+                                                        counterSet: 'line-numbering',
+                                                    }}
+                                                />
+                                            </pre>
+                                        </div>
+                                    )
+                                }
+                            </div>
+
+                        </div>
+                    </ResizablePanel>
+                </ResizablePanelGroup>
+
 
                 {iframeUrl && webContainer &&
                     (<div className="flex min-w-96 flex-col h-full">
@@ -254,7 +269,7 @@ const Project = () => {
 
             </section>
 
-           
+
         </main>
     )
 }
