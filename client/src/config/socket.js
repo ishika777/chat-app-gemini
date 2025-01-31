@@ -1,10 +1,10 @@
-import { API_URL } from "@/constants/constant";
+// import { API_URL } from "@/constants/constant";
 import socket from "socket.io-client"
 
 let socketInstance = null;
 
 export const initSocket = (projectId) => {
-    socketInstance = socket(API_URL, {
+    socketInstance = socket(import.meta.env.VITE_API_URL, {
         withCredentials: true,
         query : {
             projectId
