@@ -10,6 +10,7 @@ const MessageContainer = ({messageBox, messages, user, WriteAiMessage}) => {
         scrollToBottom();
     }, [messages]);
 
+
     function SyntaxHighlightedCode(props) {
         const ref = useRef(null)
     
@@ -43,11 +44,10 @@ const MessageContainer = ({messageBox, messages, user, WriteAiMessage}) => {
     }
 
   return (
-    <div ref={messageBox} className="message-container p-2 pb-12 flex flex-col gap-2 overflow-auto">
+    <div ref={messageBox} className="message-container p-2 pb-[3.2rem] flex flex-1 min-h-[90vh] flex-col gap-2 overflow-auto">
         {messages.map((msg, index) => (
-            console.log(msg.sender._id === user._id),
-            <div key={index} className={`${msg.sender._id === 'ai' ? 'max-w-80' : 'max-w-64'} 
-                ${msg?.sender?._id === user?._id ? 'ml-auto !bg-green-300' : ''} 
+            <div key={index} className={`${msg.sender._id === 'ai' ? 'w-fit max-w-[85%]' : 'w-fit max-w-[70%]'} 
+                ${msg?.sender?._id === user?._id ? 'ml-auto !bg-green-200' : ''} 
                 message flex flex-col p-2 bg-slate-50 w-fit rounded-md `}
             >
                 <small className='opacity-65 text-xs'>{msg.sender._id == user._id.toString() ? "" : `${msg.sender.email}`}</small>
