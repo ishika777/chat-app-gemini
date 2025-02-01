@@ -23,6 +23,11 @@ html,body{
 .add-collab::-webkit-scrollbar{
     display: none;
 }
+.CodeMirror {
+    height: 100% !important;
+    font-family: monospace;
+}
+
 @layer base {
   :root {
         --radius: 0.5rem;

@@ -6,7 +6,6 @@ const UserAuth = ({ children }) => {
 
     const navigate = useNavigate();
   const {user} = useSelector((state) => state.user)
-  const {project} = useSelector((state) => state.project)
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -16,9 +15,6 @@ const UserAuth = ({ children }) => {
       }
     if (user) {
       setLoading(false);
-    }
-    if(project){
-        navigate(`/project/${project._id}`)
     }
   }, []);
 

@@ -22,9 +22,9 @@ import MessageSend from '@/components/MessageSend'
 import SidePanel from '@/components/SidePanel'
 import MessageContainer from '@/components/MessageContainer'
 import MessageHeader from '@/components/MessageHeader'
-import CodeFile from '@/components/CodeFile'
-import { Play, Triangle, X } from 'lucide-react'
+import { Play, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import CodeEditor from '@/components/CodeEditor'
 
 
 const Project = () => {
@@ -109,19 +109,6 @@ const Project = () => {
         })
     }
 
-    const handleBlur = (e) => {
-        const updatedContent = e.target.innerText;
-        const ft = {
-            ...fileTree,
-            [currentFile]: {
-                file: {
-                    contents: updatedContent
-                }
-            }
-        }
-        setFileTree(ft)
-        saveFileTree(ft)
-    }
 
     return (
         <main className='h-screen w-screen flex'>
@@ -240,22 +227,14 @@ const Project = () => {
                             <div className="bottom flex flex-grow max-w-full shrink overflow-auto">
                                 {
                                     fileTree[currentFile] && (
+                                        console.log(fileTree[currentFile]),
                                         <div className="code-editor-area h-full overflow-auto flex-grow bg-slate-50">
-                                            <pre
-                                                className="hljs h-full">
-                                                <code
-                                                    className="hljs h-full outline-none"
-                                                    contentEditable
-                                                    suppressContentEditableWarning
-                                                    onBlur={handleBlur}
-                                                    dangerouslySetInnerHTML={{ __html: hljs.highlight('javascript', fileTree[currentFile].file.contents).value }}
-                                                    style={{
-                                                        whiteSpace: 'pre-wrap',
-                                                        paddingBottom: '25rem',
-                                                        counterSet: 'line-numbering',
-                                                    }}
-                                                />
-                                            </pre>
+                                            <CodeEditor  
+                                            setFileTree={setFileTree}
+                                            saveFileTree={saveFileTree}
+                                            currentFile={currentFile}
+                                            fileTree={fileTree}
+                                            />
                                         </div>
                                     )
                                 }
