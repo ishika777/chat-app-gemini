@@ -52,6 +52,7 @@ const Project = () => {
     const [iframeUrl, setIframeUrl] = useState(null)
 
     const [runProcess, setRunProcess] = useState(null)
+    const tabRef = useRef({});
 
     useEffect(() => {
         const getProject = async () => {
@@ -97,6 +98,12 @@ const Project = () => {
             }
         })
     }, [])
+
+    useEffect(() => {
+        if (tabRef.current?.[currentFile]) {
+            tabRef.current[currentFile].classList.add("!bg-gray-400");
+        }
+    }, [currentFile])
 
     function saveFileTree(ft) {
         axios.put('/projects/update-file-tree', {
@@ -146,11 +153,11 @@ const Project = () => {
 
                 <ResizablePanelGroup direction="horizontal" className="h-full w-full">
                     <ResizablePanel defaultSize={20} maxSize={25} >
-                        <div className="explorer h-full bg-slate-200">
+                        <div className="explorer h-full bg-slate-100">
                             <div className="file-tree w-full">
                                 {Object.keys(fileTree).map((file, index) => (
                                     <button key={index}
-                                        className="tree-element cursor-pointer p-2 px-4 flex items-center gap-2 bg-slate-300 w-full"
+                                        className={`tree-element cursor-pointer p-2 px-4 flex items-center gap-2 bg-slate-300 w-full ${currentFile === file ? "!bg-slate-400" : "!bg-slate-200"}`}
                                         onClick={() => {
                                             setCurrentFile(file)
                                             setOpenFiles([...new Set([...openFiles, file])])
@@ -167,25 +174,31 @@ const Project = () => {
                         <div className="code-editor flex flex-col flex-grow h-full shrink">
                             <div className="top flex justify-between w-full">
                                 <Tabs defaultValue={null} className="w-full">
-                                    <TabsList className="flex items-center justify-start gap-1 w-full rounded-none bg-gray-300">
+                                    <TabsList className="flex items-center justify-start gap-1 w-full rounded-none bg-slate-100">
                                         {openFiles.map((file, index) => (
                                             <TabsTrigger
+                                                ref={(el) => {
+                                                    if (el) tabRef.current[file] = el;
+                                                }}
                                                 key={index}
-                                                className={`open-file cursor-pointer flex items-center w-fit text-black ${currentFile === file ? 'bg-gray-400' : 'bg-white'}`}
+                                                
+                                                className={`open-file cursor-pointer flex items-center w-fit text-black border-[1px] ${currentFile === file ? '!bg-slate-400 border-transparent' : '!bg-slate-300 border-black'} `}
                                                 onClick={() => {
-                                                    setCurrentFile(file)
-                                                    console.log("file set as", file)
+                                                        setCurrentFile(file);
+                                                     
                                                 }}
                                             >
                                                 {file} 
-                                                <X size={20} className='ml-1 hover:bg-gray-100 p-[1px]' onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    const newFiles = openFiles.filter(f => f !== file)
-                                                    setOpenFiles(newFiles)
-                                                    if (currentFile === file) {
-                                                        setCurrentFile(newFiles[newFiles.length - 1] || [])
-                                                    }
-                                                }} />
+                                                <div className={`flex items-center justify-center ml-1 rounded-md ${currentFile === file ? "bg-slate-400 hover:bg-slate-500" : "bg-slate-300 hover:bg-slate-400"}`}>   
+                                                    <X size={20} className=' p-[1px]' onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        const newFiles = openFiles.filter(f => f !== file)
+                                                        setOpenFiles(newFiles)
+                                                        if (currentFile === file) {
+                                                            setCurrentFile(newFiles[newFiles.length - 1] || [])
+                                                        }
+                                                    }} />
+                                                </div>
                                             </TabsTrigger>
                                         ))}
                                     </TabsList>
@@ -227,7 +240,6 @@ const Project = () => {
                             <div className="bottom flex flex-grow max-w-full shrink overflow-auto">
                                 {
                                     fileTree[currentFile] && (
-                                        console.log(fileTree[currentFile]),
                                         <div className="code-editor-area h-full overflow-auto flex-grow bg-slate-50">
                                             <CodeEditor  
                                             setFileTree={setFileTree}

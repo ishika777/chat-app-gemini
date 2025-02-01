@@ -1,7 +1,5 @@
 import React, { useEffect, useRef } from 'react'
 import Markdown from 'markdown-to-jsx'
-import hljs from 'highlight.js';
-
 const MessageContainer = ({messageBox, messages, user, WriteAiMessage}) => {
 
 
@@ -49,7 +47,7 @@ const MessageContainer = ({messageBox, messages, user, WriteAiMessage}) => {
         {messages.map((msg, index) => (
             console.log(msg.sender._id === user._id),
             <div key={index} className={`${msg.sender._id === 'ai' ? 'max-w-80' : 'max-w-64'} 
-                ${msg?.sender?._id === user?._id ? 'ml-auto bg-green-300' : ''} 
+                ${msg?.sender?._id === user?._id ? 'ml-auto !bg-green-300' : ''} 
                 message flex flex-col p-2 bg-slate-50 w-fit rounded-md `}
             >
                 <small className='opacity-65 text-xs'>{msg.sender._id == user._id.toString() ? "" : `${msg.sender.email}`}</small>

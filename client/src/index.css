@@ -24,10 +24,9 @@ html,body{
     display: none;
 }
 .CodeMirror {
-    height: 100% !important;
+    min-height: calc(100vh - 40px);
     font-family: monospace;
 }
-
 @layer base {
   :root {
         --radius: 0.5rem;
