@@ -13,34 +13,34 @@ import Logout from './components/Logout'
 
 function App() {
 
-    const dispatch = useDispatch()
-    const [isCheckingAuth, setIsCheckingAuth] = useState(false);
+    // const dispatch = useDispatch()
+    // const [isCheckingAuth, setIsCheckingAuth] = useState(false);
 
-    useEffect(() => {
-        const checkUser = async() => {
-            try {
-                setIsCheckingAuth(true);
-                const response = await axios.get("/users/check-auth", {
-                    headers : {
-                        "Content-Type": "application/json"
-                    }
-                })
-                if(response.data.success){
-                    dispatch(setUser(response.data.user))
-                }
-            } catch (error) {
-                setIsCheckingAuth(false)
-                console.log(error)
-            }finally{
-                setIsCheckingAuth(false)
-            }
-        }
-        checkUser();
-    }, [])
+    // useEffect(() => {
+    //     const checkUser = async() => {
+    //         try {
+    //             setIsCheckingAuth(true);
+    //             const response = await axios.get("/users/check-auth", {
+    //                 headers : {
+    //                     "Content-Type": "application/json"
+    //                 }
+    //             })
+    //             if(response.data.success){
+    //                 dispatch(setUser(response.data.user))
+    //             }
+    //         } catch (error) {
+    //             setIsCheckingAuth(false)
+    //             console.log(error)
+    //         }finally{
+    //             setIsCheckingAuth(false)
+    //         }
+    //     }
+    //     checkUser();
+    // }, [])
 
-    if(isCheckingAuth){
-        return <Loader />
-    }
+    // if(isCheckingAuth){
+    //     return <Loader />
+    // }
 
   return (
         <BrowserRouter>
