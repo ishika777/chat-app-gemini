@@ -98,10 +98,6 @@ const Project = () => {
         })
     }, [])
 
-    useEffect(() => {
-        
-    }, [currentFile])
-
     function saveFileTree(ft) {
         axios.put('/projects/update-file-tree', {
             projectId: project._id,
@@ -184,11 +180,11 @@ const Project = () => {
                         <div className="code-editor flex flex-col flex-grow h-full shrink">
                             <div className="top flex justify-between w-full">
                                 <Tabs defaultValue={null} className="w-full">
-                                    <TabsList className="flex items-center justify-start gap-1 rounded-none bg-gray-200">
+                                    <TabsList className="flex items-center justify-start gap-1 w-full rounded-none bg-gray-300">
                                         {openFiles.map((file, index) => (
                                             <TabsTrigger
                                                 key={index}
-                                                className={`open-file cursor-pointer flex items-center w-fit text-black ${currentFile === file ? 'bg-gray-400' : ''}`}
+                                                className={`open-file cursor-pointer flex items-center w-fit text-black ${currentFile === file ? 'bg-gray-400' : 'bg-white'}`}
                                                 onClick={() => {
                                                     setCurrentFile(file)
                                                     console.log("file set as", file)
