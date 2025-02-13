@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux'
 import { setUser } from '../store/user-slice';
 import { useNavigate } from 'react-router-dom';
 
-const Logout = () => {
+const Logout = ({children}) => {
 
     const dispatch = useDispatch();
     const navigate = useNavigate()
@@ -28,7 +28,7 @@ const Logout = () => {
         logoutHandle()
     }, [])
   return (
-    <></>
+    <>{children}</>
   )
 }
 

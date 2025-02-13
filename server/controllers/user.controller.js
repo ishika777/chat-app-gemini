@@ -80,7 +80,7 @@ module.exports.getProfile = async (req, res) => {
 
 module.exports.logout = async (req, res) => {
     try {
-        redisClient.set(token, 'logout', 'EX', 60 * 60 * 24);//24h
+        // redisClient.set(token, 'logout', 'EX', 60 * 60 * 24);//24h
         
         res.clearCookie("token")
         return res.status(200).json({
